@@ -46,9 +46,10 @@ namespace Clinica.Formularios
             CargarSexo();
             CargarPacientes();
 
-            txtNss.MaxLength = 0;
-            txtTelefono.MaxLength = 0;
-            txtCurp.MaxLength = 0;
+            txtNss.MaxLength = 11; //El NSS, Telefono y Curp tienen límite de digítos, así que le cambié aquí (puesto que desde las propiedades del diseñador no lo aplicaba, ya que lo estabas sobrescribiendo con 0 al inicializarlo)
+            txtTelefono.MaxLength = 10; 
+            txtCurp.MaxLength = 18;
+            txtCurp.CharacterCasing = CharacterCasing.Upper; //Le agregué esto para que siempre se ponga en mayuscula, aunque el teclado este desactivado, puesto que por estética la CURP es así
             txtNota.MaxLength = 0;
         }
 
@@ -98,6 +99,7 @@ namespace Clinica.Formularios
         }
 
         //che sexo nada de terians o jotos
+        //XD
         private void CargarSexo()
         {
             cbSexo.Items.Clear();
@@ -167,6 +169,7 @@ namespace Clinica.Formularios
             // Asociar el evento MouseDown al formulario y al panel
             this.MouseDown += ArrastrarFormulario;
             panell1.MouseDown += ArrastrarFormulario;
+            txtNombre.Focus(); //Le agregué el focus para que lo inicie en el primer campo a llenar, por estética
         }
 
         private void pictureBox8_Click(object sender, EventArgs e)
@@ -181,16 +184,47 @@ namespace Clinica.Formularios
 
         private void btnGuardar_Click(object sender, EventArgs e)
         {
+            //Validación para que no guarde un "registro" vacío :v
+            if (string.IsNullOrWhiteSpace(txtNombre.Text) || string.IsNullOrWhiteSpace(txtApellidoPa.Text) || string.IsNullOrWhiteSpace(txtApellidoMa.Text) || string.IsNullOrWhiteSpace(txtCurp.Text) || string.IsNullOrWhiteSpace(txtNss.Text) || string.IsNullOrWhiteSpace(txtDiagnosticoPri.Text) || string.IsNullOrWhiteSpace(txtTelefono.Text) || string.IsNullOrWhiteSpace(txtNota.Text))
+            {
+                MessageBox.Show("No puede haber campos vacíos. Por favor ingrese todos los datos requeridos.", "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            //Validaciones para que no se guarden datos con formato incorrecto
+            if (txtCurp.Text.Length < 18)
+            {
+                MessageBox.Show("La CURP debe tener 18 caracteres, para ser correcta.", "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtCurp.Focus();
+                return;
+            }
+            if (txtNss.Text.Length < 11)
+            {
+                MessageBox.Show("El NSS debe ser de 11 caracteres, para ser correcto.", "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtNss.Focus();
+                return;
+            }
+            if (txtTelefono.Text.Length < 10)
+            {
+                MessageBox.Show("El teléfono debe tener 10 dígitos, para ser correcto.", "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtTelefono.Focus();
+                return;
+            }
+
             //encripta antes de que se guarde en base de datos
             //en este caso CURP
-
-            //borracha nomas duplica esta linea de codigo por cada campo que 
-            //tiene la llave 
+            //borracha nomas duplica esta linea de codigo por cada campo que (No soy Borracha :v)
+            //tiene la llave
+            //ENTENDIDO :)
             string curpCifrada = string.IsNullOrEmpty(txtCurp.Text) ? "" : Encriptar(txtCurp.Text);
+            string nss = string.IsNullOrEmpty(txtNss.Text) ? "" : Encriptar(txtNss.Text);
+            string diagnostico = string.IsNullOrEmpty(txtDiagnosticoPri.Text) ? "" : Encriptar(txtDiagnosticoPri.Text);
+            string telefono = string.IsNullOrEmpty(txtTelefono.Text) ? "" : Encriptar(txtTelefono.Text);
+            string notaMedica = string.IsNullOrEmpty(txtNota.Text) ? "" : Encriptar(txtNota.Text);
 
 
-            //Aqui agregale los campos que flatal ya no se me ocurren insultos
-            string sql = @"insert into Pacientes (Nombre, ApellidoMa, ApellidoPa, FechaNacimiento, Sexo, CURP) values (@nombre, @apellidoMa, @apellidoPa, @fechaNac, @sexo, @curp)";
+            //Aqui agregale los campos que flatal ya no se me ocurren insultos (xD)
+            string sql = @"insert into Pacientes (Nombre, ApellidoMa, ApellidoPa, FechaNacimiento, Sexo, CURP, NSS, Diagnostico, Telefono, Notas) values (@nombre, @apellidoMa, @apellidoPa, @fechaNac, @sexo, @curp, @nss, @diagnostico, @telefono, @notas)";
 
             con = new SqlConnection(x.Conexion);
             con.Open();
@@ -204,11 +238,15 @@ namespace Clinica.Formularios
             p.Parameters.AddWithValue("@fechaNac", dtFellaNa.Value);
             p.Parameters.AddWithValue("@sexo", cbSexo.SelectedItem.ToString());
             p.Parameters.AddWithValue("@curp", curpCifrada);
+            p.Parameters.AddWithValue("@nss", nss);
+            p.Parameters.AddWithValue("@diagnostico", diagnostico);
+            p.Parameters.AddWithValue("@telefono", telefono);
+            p.Parameters.AddWithValue("@notas", notaMedica);
 
             p.ExecuteNonQuery();
             con.Close();
 
-            MessageBox.Show("Paciente guardado exitosamente.");
+            MessageBox.Show("Paciente guardado exitosamente.", "MENSAJE",MessageBoxButtons.OK, MessageBoxIcon.Information); //Le agregué el ícono al mensaje, por estética
             Limpiar();
             CargarPacientes();
 
@@ -225,7 +263,7 @@ namespace Clinica.Formularios
 
             //Aqui nomas ponle todos los campos que se cifraron yo le puse la curp para ver que
             //que me traiga la cosa cifrada
-            string sql = "select CURP from Pacientes where id = @id";
+            string sql = "select CURP, NSS, Diagnostico, Telefono, Notas from Pacientes where id = @id";
 
             con = new SqlConnection(x.Conexion);
             con.Open();
@@ -239,12 +277,15 @@ namespace Clinica.Formularios
             if (re.Read())
             {
                 string curpOriginal = Desencriptar(re["CURP"].ToString());
+                string nssOriginal = Desencriptar(re["NSS"].ToString());
+                string diagnosticoOriginal = Desencriptar(re["Diagnostico"].ToString());
+                string telefonoOriginal = Desencriptar(re["Telefono"].ToString());
+                string notaMOriginal = Desencriptar(re["Notas"].ToString());
 
                 MessageBox.Show(
-                    $"CURP: {curpOriginal}\n" //+
-                    //$"NSS: {curpOriginal}\n"
+                    $"CURP: {curpOriginal}\n" + $"NSS: {nssOriginal}\n" + $"Diagnostico: {diagnosticoOriginal}\n" + $"Telefono: {telefonoOriginal}\n" + $"Notas: {notaMOriginal}","RESULTADOS", MessageBoxButtons.OK, MessageBoxIcon.Information //También le agregué el ícono al mensaje, por estética
 
-                    // asi mero llenalo con todos los demas campos
+                // asi mero llenalo con todos los demas campos
                 );
             }
             re.Close();
@@ -311,6 +352,7 @@ namespace Clinica.Formularios
             cbSexo.SelectedIndex = 0;
             dtFellaNa.Value = DateTime.Today;
             txtBuscar.Clear();
+            txtNombre.Focus(); //Le agregué el focus por estética
             CargarPacientes();
         }
 
@@ -342,6 +384,7 @@ namespace Clinica.Formularios
             if (!char.IsDigit(e.KeyChar) && e.KeyChar != (char)Keys.Back)
                 e.Handled = true;
         }
+
 
         private void dtgPaciente_CellClick(object sender, DataGridViewCellEventArgs e)
         {
@@ -379,6 +422,19 @@ namespace Clinica.Formularios
 
                 // los campos cifrados se miran tal cual
                 txtCurp.Text = re["CURP"].ToString();
+                txtNss.Text = re["NSS"].ToString();
+                txtDiagnosticoPri.Text = re["Diagnostico"].ToString();
+                txtTelefono.Text = re["Telefono"].ToString();
+                txtNota.Text = re["Notas"].ToString();
+            }
+        }
+
+        //Le agregué este evento para que solo permita números en el NSS
+        private void txtNss_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (!char.IsDigit(e.KeyChar) && e.KeyChar != (char)Keys.Back)
+            {
+                e.Handled = true;
             }
         }
     }
