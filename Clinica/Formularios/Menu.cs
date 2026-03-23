@@ -48,7 +48,7 @@ namespace Clinica.Formularios
 
             txtNss.MaxLength = 11; //El NSS, Telefono y Curp tienen límite de digítos, así que le cambié aquí (puesto que desde las propiedades del diseñador no lo aplicaba, ya que lo estabas sobrescribiendo con 0 al inicializarlo)
             txtTelefono.MaxLength = 10; 
-            txtCurp.MaxLength = 18;
+            //txtCurp.MaxLength = 18;
             txtCurp.CharacterCasing = CharacterCasing.Upper; //Le agregué esto para que siempre se ponga en mayuscula, aunque el teclado este desactivado, puesto que por estética la CURP es así
             txtNota.MaxLength = 0;
         }

@@ -133,6 +133,26 @@ namespace Clinica.Properties {
         /// <summary>
         ///   Busca un recurso adaptado de tipo System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap candado_abierto {
+            get {
+                object obj = ResourceManager.GetObject("candado-abierto", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Busca un recurso adaptado de tipo System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap candado_abierto__1_ {
+            get {
+                object obj = ResourceManager.GetObject("candado-abierto (1)", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Busca un recurso adaptado de tipo System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Captura_de_pantalla_2026_03_21_210436_Photoroom {
             get {
                 object obj = ResourceManager.GetObject("Captura de pantalla 2026-03-21 210436-Photoroom", resourceCulture);

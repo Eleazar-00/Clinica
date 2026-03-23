@@ -9,6 +9,6 @@ namespace Clinica.Clases
     internal class ConexionSQL
     {
         //Ahí le cambias con tus datos de conexión
-        public string Conexion = @"Data source= LAPTOP-3VJE0GMV\UADEO; Initial Catalog= Clinica; user id = sa; password = rame2005";
+        public string Conexion = @"Data source= ELEAZARLAP\SQLEXPRESS01; Initial Catalog= Clinica; user id = sa; password = 12345";
     }
 }

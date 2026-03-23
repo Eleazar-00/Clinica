@@ -147,5 +147,11 @@
   <ItemGroup>
     <None Include="Resources\limpiar.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\candado-abierto.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\candado-abierto %281%29.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
