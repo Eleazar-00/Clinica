@@ -11,6 +11,8 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Forms.Design;
+
 
 namespace Clinica.Formularios
 {
@@ -170,6 +172,9 @@ namespace Clinica.Formularios
             this.MouseDown += ArrastrarFormulario;
             panell1.MouseDown += ArrastrarFormulario;
             txtNombre.Focus(); //Le agregué el focus para que lo inicie en el primer campo a llenar, por estética
+
+            SetPlaceholder(txtBuscar, "Contraseña de Pepe");
+
         }
 
         private void pictureBox8_Click(object sender, EventArgs e)
