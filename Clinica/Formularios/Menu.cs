@@ -21,7 +21,7 @@ namespace Clinica.Formularios
         Clases.ConexionSQL x = new Clases.ConexionSQL();
         SqlConnection con = new SqlConnection();
 
-        //la clave y el iv los puse figos para no batallar en la base
+        //la clave y el iv los puse fijos para no batallar en la base
         //de datos
         private static readonly byte[] key = Encoding.UTF8.GetBytes("ClaveScret_Nigga");
         private static readonly byte[] iv = Encoding.UTF8.GetBytes("IV_Nigga");
@@ -72,8 +72,8 @@ namespace Clinica.Formularios
                         sw.Write(plainText);
                     }
 
-                    //esta cosa convbierte el texto cifrado a base 64
-                    //para que gusrden la base de datos sin pedos
+                    //esta cosa convierte el texto cifrado a base 64
+                    //para que guarden la base de datos sin pedos
                     return Convert.ToBase64String(ms.ToArray());
                 }
             }
@@ -81,7 +81,7 @@ namespace Clinica.Formularios
 
         private string Desencriptar(string cipherBase64)
         {
-            // esto convbierte lo de la base de dtaos a bytes
+            // esto convierte lo de la base de datos a bytes
             byte[] cipherText = Convert.FromBase64String(cipherBase64);
 
             using (RC2 rc2 = RC2.Create())
@@ -100,7 +100,7 @@ namespace Clinica.Formularios
             }
         }
 
-        //che sexo nada de terians o jotos
+        //che sexo nada de terians
         //XD
         private void CargarSexo()
         {
@@ -218,7 +218,7 @@ namespace Clinica.Formularios
 
             //encripta antes de que se guarde en base de datos
             //en este caso CURP
-            //borracha nomas duplica esta linea de codigo por cada campo que (No soy Borracha :v)
+            //Nómas duplica esta linea de codigo por cada campo que
             //tiene la llave
             //ENTENDIDO :)
             string curpCifrada = string.IsNullOrEmpty(txtCurp.Text) ? "" : Encriptar(txtCurp.Text);
@@ -228,14 +228,14 @@ namespace Clinica.Formularios
             string notaMedica = string.IsNullOrEmpty(txtNota.Text) ? "" : Encriptar(txtNota.Text);
 
 
-            //Aqui agregale los campos que flatal ya no se me ocurren insultos (xD)
+            //Aqui agregale los campos que faltan
             string sql = @"insert into Pacientes (Nombre, ApellidoMa, ApellidoPa, FechaNacimiento, Sexo, CURP, NSS, Diagnostico, Telefono, Notas) values (@nombre, @apellidoMa, @apellidoPa, @fechaNac, @sexo, @curp, @nss, @diagnostico, @telefono, @notas)";
 
             con = new SqlConnection(x.Conexion);
             con.Open();
 
 
-            //Igual aqui agregale los campos que flatan
+            //Igual aqui agregale los campos que faltan
             SqlCommand p = new SqlCommand(sql, con);
             p.Parameters.AddWithValue("@nombre", txtNombre.Text);
             p.Parameters.AddWithValue("@apellidoMa", txtApellidoMa.Text);
@@ -277,7 +277,7 @@ namespace Clinica.Formularios
             p.Parameters.AddWithValue("@id", id);
 
 
-            //Desencripchon todo pue y agrega un strign por cada campo encriptadpo
+            //Desencripción todo pue' y agrega un string por cada campo encriptadpo
             SqlDataReader re = p.ExecuteReader();
             if (re.Read())
             {
@@ -290,7 +290,7 @@ namespace Clinica.Formularios
                 MessageBox.Show(
                     $"CURP: {curpOriginal}\n" + $"NSS: {nssOriginal}\n" + $"Diagnostico: {diagnosticoOriginal}\n" + $"Telefono: {telefonoOriginal}\n" + $"Notas: {notaMOriginal}","RESULTADOS", MessageBoxButtons.OK, MessageBoxIcon.Information //También le agregué el ícono al mensaje, por estética
 
-                // asi mero llenalo con todos los demas campos
+                
                 );
             }
             re.Close();
